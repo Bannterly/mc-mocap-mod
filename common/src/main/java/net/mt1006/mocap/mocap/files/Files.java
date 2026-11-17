@@ -101,16 +101,17 @@ public class Files
 		return true;
 	}
 
-	public static byte @Nullable[] loadFile(@Nullable File file)
+		public static byte @Nullable[] loadFile(@Nullable File file)
 	{
 		if (file == null) { return null; }
-		byte[] data;
 
+		long fileSize = file.length();
+		if (fileSize > Integer.MAX_VALUE) { return null; }
+
+		byte[] data = new byte[(int)fileSize];
 		try (FileInputStream stream = new FileInputStream(file))
 		{
-			int fileSize = (int)file.length();
-			data = new byte[fileSize];
-			if (stream.read(data) != fileSize) { return null; }
+			if (stream.readNBytes(data, 0, data.length) != data.length) { return null; }
 		}
 		catch (Exception e) { return null; }
 

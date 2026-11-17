@@ -21,19 +21,20 @@ Modrinth page: https://modrinth.com/mod/motion-capture
 
 - First, you need to start recording using ```/mocap recording start```. It will record all your movements or movements of a player given as an argument. 
 - Then, you can stop recording using ```/mocap recording stop``` and save it with ```/mocap recording save <name>```.
-- Use ```/mocap playing start <name>``` to play recording.
+- Use ```/mocap playback start <name>``` to play recording.
 - You can also create scenes to which you can add multiple recordings or other scenes, with parameters like player name, position offset, or start delay.
-- To create scene use ```/mocap scenes add <scene_name>```. Then, add your recording using ```/mocap scenes addTo <scene_name> <recording_name> [delay] [x_offset] [y_offset] [z_offset] [player_name] [skin_source_type] [skin_source]``` (you can skip arguments in square brackets if you want).
-- To play scene use ```/mocap playing start .<scene_name>``` - you need to put a dot before the scene name.
-- By putting a dot before name, when using ```/mocap scenes addTo (...)```, you can also add scenes to other scenes.
+- To create a scene use ```/mocap scenes add <scene_name>```. Then add your recording with ```/mocap scenes add_to <scene_name> <recording_name> [wait_on_start]```. More settings can be applied with playback modifiers before adding, or later with ```/mocap scenes modify <scene_name> <element> ...```.
+- To play a scene use ```/mocap playback start .<scene_name>``` - put a dot before the scene name.
+- By putting a dot before the name when using ```/mocap scenes add_to (...)```, you can also add scenes to other scenes.
 
 ### Commands
 ```
 /mocap recording [...] - Recording player movements
 /mocap recordings [...] - Managing recording files
 /mocap scenes [...] - Creating and modifying scenes
-/mocap playing [...] - Playing scenes and recordings
+/mocap playback [...] - Playing scenes and recordings
 /mocap settings [...] - Shows and modifies settings
+/mocap misc [...] - Cache, suggestions and extension commands
 /mocap info - Displays information about mod
 /mocap help - Displays help message
 ```

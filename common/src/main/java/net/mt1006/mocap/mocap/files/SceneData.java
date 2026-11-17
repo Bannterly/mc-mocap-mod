@@ -46,12 +46,10 @@ public class SceneData
 		elements.forEach((s) -> subscenesArray.add(s.toJson()));
 		json.add("subscenes", subscenesArray);
 
-		try
+		try (FileWriter writer = new FileWriter(file.getFile()))
 		{
-			FileWriter writer = new FileWriter(file.getFile());
 			GsonBuilder gsonBuilder = Settings.PRETTY_SCENE_FILES.val ? new GsonBuilder().setPrettyPrinting() : new GsonBuilder();
 			gsonBuilder.create().toJson(json, writer);
-			writer.close();
 
 			saveToSceneElementCache(sceneName);
 			out.sendSuccess(onSuccess);

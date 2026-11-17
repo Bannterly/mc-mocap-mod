@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class RecordingFiles
@@ -36,6 +38,8 @@ public class RecordingFiles
 
 	public static boolean save(CommandOutput out, File recordingFile, String name, RecordingData data)
 	{
+		File tempFile = null;
+
 		try
 		{
 			// double-check to make sure it won't override existing file
@@ -45,14 +49,32 @@ public class RecordingFiles
 				return false;
 			}
 
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(recordingFile));
-			data.save(stream);
-			stream.close();
+			tempFile = File.createTempFile("mocap-", ".tmp", recordingFile.getParentFile());
+			try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(tempFile)))
+			{
+				data.save(stream);
+			}
+
+			try
+			{
+				java.nio.file.Files.move(tempFile.toPath(), recordingFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
+			}
+			catch (AtomicMoveNotSupportedException e)
+			{
+				java.nio.file.Files.move(tempFile.toPath(), recordingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
 		}
 		catch (IOException e)
 		{
 			out.sendException(e, "recording.save.error");
 			return false;
+		}
+		finally
+		{
+			if (tempFile != null && tempFile.exists() && !tempFile.delete())
+			{
+				MocapMod.LOGGER.warn("Failed to delete temporary recording file: {}", tempFile);
+			}
 		}
 
 		CommandSuggestions.inputSet.add(name);
